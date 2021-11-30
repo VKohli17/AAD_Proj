@@ -2,6 +2,7 @@ import json
 import os
 
 import matplotlib.pyplot as plt
+import operator
 import numpy as np
 import pandas as pd
 from datawrapper import Datawrapper
@@ -277,7 +278,12 @@ def rpos_2021(): # Finding runs made per over for all matches from 2021
 
 def diff_in_worms(): # use greedy approach to sort the matches by degree of similarity of first worm and second worm
 
-    alldiffs = {}    
+    alldiffs = {}
+    totaldiffs = {}
+    totalabsdiffs = {}
+    weighted_diffs = {}
+    weighted_diffs_2 = {}
+    weighted_diffs_3 = {}
     for num, js in enumerate(json_files):
         with open(os.path.join(path_to_jsons, js)) as json_file:
             data = json.load(json_file)
@@ -303,17 +309,68 @@ def diff_in_worms(): # use greedy approach to sort the matches by degree of simi
                             total_runs += k['runs']['total']
                         team2worm[j['over']+1] = total_runs
                     # each entry in diff is the difference of entries of team1worm and team2worm
+                    totaldiff = 0
+                    totalabsdiff = 0
+                    weighted_diff = 0
+                    weighted_diff_3 = 0
                     for key in team2worm:
                         diff[key] = team2worm[key] - team1worm[key]
+                        totaldiff += diff[key]
+                        totalabsdiff += abs(diff[key])
+                        weighted_diff += abs(diff[key]*(key))
+                        weighted_diff_3 += abs(diff[key]*(key**2))
+
+                    # trying to normalize 
+                    weighted_diff_2 = weighted_diff*20/len(team2worm)
+                    weighted_diff_3 = weighted_diff_3*((20/len(team2worm))**2)
 
                     # add match to the alldiffs dictionary as attribute, use matchID as key
                     alldiffs[matchID] = diff
+                    totaldiffs[matchID] = totaldiff
+                    totalabsdiffs[matchID] = totalabsdiff
+                    weighted_diffs[matchID] = weighted_diff
+                    weighted_diffs_2[matchID] = weighted_diff_2
+                    weighted_diffs_3[matchID] = weighted_diff_3
+
+    # sort the totalabsdiffs dictionary
+    sorted_totalabsdiffs = sorted(totalabsdiffs.items(), key=operator.itemgetter(1))
+
+    # sort the weighted_diffs dictionary
+    sorted_weighted_diffs = sorted(weighted_diffs.items(), key=operator.itemgetter(1))
+
+    # sort the weighted_diffs_2 dictionary
+    sorted_weighted_diffs_2 = sorted(weighted_diffs_2.items(), key=operator.itemgetter(1))
+
+    # sort the weighted_diffs_3 dictionary
+    sorted_weighted_diffs_3 = sorted(weighted_diffs_3.items(), key=operator.itemgetter(1))
 
     # save the alldiffs dictionary to a json file
     with open('alldiffs.json', 'w') as f:
-        json.dump(alldiffs, f, indent=4)    
+        json.dump(alldiffs, f, indent=4)
 
+    # save the totaldiffs dictionary to a json file
+    with open('totaldiffs.json', 'w') as f:
+        json.dump(totaldiffs, f, indent=4)
 
+    # save the totalabsdiffs dictionary to a json file
+    with open('totalabsdiffs.json', 'w') as f:
+        json.dump(totalabsdiffs, f, indent=4)
+
+    # save the sorted totalabsdiffs dictionary to a json file
+    with open('sorted_totalabsdiffs.json', 'w') as f:
+        json.dump(sorted_totalabsdiffs, f, indent=4)
+
+    # save the sorted weighted_diffs dictionary to a json file
+    with open('sorted_weighted_diffs.json', 'w') as f:
+        json.dump(sorted_weighted_diffs, f, indent=4)
+
+    # save the sorted weighted_diffs_2 dictionary to a json file
+    with open('sorted_weighted_diffs_2.json', 'w') as f:
+        json.dump(sorted_weighted_diffs_2, f, indent=4)
+
+    # save the sorted weighted_diffs_3 dictionary to a json file
+    with open('sorted_weighted_diffs_3.json', 'w') as f:
+        json.dump(sorted_weighted_diffs_3, f, indent=4)
 
 # whichever function you wanna use, substitute the name of the function here:
 # diff_in_worms()
