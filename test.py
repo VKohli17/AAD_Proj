@@ -372,5 +372,76 @@ def diff_in_worms(): # use greedy approach to sort the matches by degree of simi
     with open('sorted_weighted_diffs_3.json', 'w') as f:
         json.dump(sorted_weighted_diffs_3, f, indent=4)
 
+def worms_allyears():
+
+    for num, js in enumerate(json_files):
+        with open(os.path.join(path_to_jsons, js)) as json_file:
+            data = json.load(json_file)
+            innings = {}
+            for x in data['info']['dates']:
+                # if x doesn't start with 2008 or 2009 or 2010 or 2011
+                if not x.startswith('2008') and not x.startswith('2009') and not x.startswith('2010') and not x.startswith('2011'):
+                # if x.startswith('2011'):
+                    # check the first 4 characters of the date and copy them into a string named year
+                    year = x[:4]
+                    if 'stage' in data['info']['event']:
+                        matchID = year + '_' + data['info']['event']['stage']
+                    elif 'match_number' in data['info']['event']:
+                        matchID = year + '_' + str(data['info']['event']['match_number'])
+                    team1worm = {}
+                    team2worm = {}
+                    total_runs = 0
+                    for j in data['innings'][0]['overs']:
+                        for k in j['deliveries']:
+                            total_runs += k['runs']['total']
+                        team1worm[j['over']+1] = total_runs
+                    first_total = total_runs
+                    total_runs = 0
+                    overs_team1 = list(team1worm.keys())
+                    runs_team1 = list(team1worm.values())
+                    plt.figure(figsize=(20,20))
+                    plt.plot(overs_team1, runs_team1, color = 'black')
+                    plt.xlabel('Overs')
+                    plt.ylabel('Runs')
+                    plt.title(matchID + '_1' + '_' + data['info']['teams'][0])
+                    plt.xticks(np.arange(1, 21, 1), ha='right')
+                    plt.yticks(np.arange(0, first_total + 20, 10))
+                    plt.savefig('allworms/' + matchID + '_1.png')
+                    plt.clf()
+                    plt.close()
+                    if len(data['innings']) > 1:
+                        for j in data['innings'][1]['overs']:
+                            for k in j['deliveries']:
+                                total_runs += k['runs']['total']
+                            team2worm[j['over']+1] = total_runs
+                        second_total = total_runs
+                        innings[year + '_' + matchID + '_1'] = team1worm
+                        innings[year + '_' + matchID + '_2'] = team2worm
+                        overs_team2 = list(team2worm.keys())
+                        runs_team2 = list(team2worm.values())                
+                        plt.figure(figsize=(20,20))
+                        plt.plot(overs_team2, runs_team2, color = 'black')
+                        plt.xlabel('Overs')
+                        plt.ylabel('Runs')
+                        plt.title(matchID + '_2' + '_' + data['info']['teams'][1])
+                        plt.xticks(np.arange(1, 21, 1), ha='right')
+                        plt.yticks(np.arange(0, second_total + 20, 10))
+                        plt.savefig('allworms/' + matchID + '_2.png')
+                        plt.clf()
+                        plt.close()
+
+    # save the innings dictionary to a json file
+    with open('innings.json', 'w') as f:
+        json.dump(innings, f, indent=4)
+
+def debugginglmao():
+    for num, js in enumerate(json_files):
+        with open(os.path.join(path_to_jsons, js)) as json_file:
+            data = json.load(json_file)
+            match = {}
+            for x in data['info']['dates']:
+                if x.startswith('2011-05-21'):
+                    print(len(data['innings']))
+
 # whichever function you wanna use, substitute the name of the function here:
-# diff_in_worms()
+worms_allyears()
