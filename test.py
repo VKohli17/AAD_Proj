@@ -374,13 +374,12 @@ def diff_in_worms(): # use greedy approach to sort the matches by degree of simi
 
 def worms_allyears():
 
+    innings = {}
     for num, js in enumerate(json_files):
         with open(os.path.join(path_to_jsons, js)) as json_file:
             data = json.load(json_file)
-            innings = {}
             for x in data['info']['dates']:
-                # if x doesn't start with 2008 or 2009 or 2010 or 2011
-                if not x.startswith('2008') and not x.startswith('2009') and not x.startswith('2010') and not x.startswith('2011'):
+                # if not x.startswith('2008') and not x.startswith('2009') and not x.startswith('2010') and not x.startswith('2011'):
                 # if x.startswith('2011'):
                     # check the first 4 characters of the date and copy them into a string named year
                     year = x[:4]
@@ -415,8 +414,8 @@ def worms_allyears():
                                 total_runs += k['runs']['total']
                             team2worm[j['over']+1] = total_runs
                         second_total = total_runs
-                        innings[year + '_' + matchID + '_1'] = team1worm
-                        innings[year + '_' + matchID + '_2'] = team2worm
+                        innings[matchID + '_1'] = team1worm
+                        innings[matchID + '_2'] = team2worm
                         overs_team2 = list(team2worm.keys())
                         runs_team2 = list(team2worm.values())                
                         plt.figure(figsize=(20,20))
@@ -434,6 +433,161 @@ def worms_allyears():
     with open('innings.json', 'w') as f:
         json.dump(innings, f, indent=4)
 
+Final_2020_1 = {
+        "1": 6,
+        "2": 9,
+        "3": 22,
+        "4": 34,
+        "5": 42,
+        "6": 50,
+        "7": 56,
+        "8": 61,
+        "9": 65,
+        "10": 80,
+        "11": 97,
+        "12": 104,
+        "13": 116,
+        "14": 125,
+        "15": 131,
+        "16": 139,
+        "17": 153,
+        "18": 172,
+        "19": 185,
+        "20": 192
+    }
+
+def comparing_worm():
+    innings = {}
+    for num, js in enumerate(json_files):
+        with open(os.path.join(path_to_jsons, js)) as json_file:
+            data = json.load(json_file)
+            for x in data['info']['dates']:
+                # if date isn't 2021-10-15
+                if x != '2021-10-15':
+                    year = x[:4]
+                    if 'stage' in data['info']['event']:
+                        matchID = year + '_' + data['info']['event']['stage']
+                    elif 'match_number' in data['info']['event']:
+                        matchID = year + '_' + str(data['info']['event']['match_number'])
+                    team1worm = {}
+                    team2worm = {}
+                    total_runs = 0
+                    for j in data['innings'][0]['overs']:
+                        for k in j['deliveries']:
+                            total_runs += k['runs']['total']
+                        # if the value of j['over'+1] is 1:
+                        if j['over']+1 == 1:                           
+                            team1worm[j['over']+1] = total_runs - 6
+                        elif j['over']+1 == 2:
+                            team1worm[j['over']+1] = total_runs - 9
+                        elif j['over']+1 == 3:
+                            team1worm[j['over']+1] = total_runs - 22
+                        elif j['over']+1 == 4:
+                            team1worm[j['over']+1] = total_runs - 34
+                        elif j['over']+1 == 5:
+                            team1worm[j['over']+1] = total_runs - 42
+                        elif j['over']+1 == 6:
+                            team1worm[j['over']+1] = total_runs - 50
+                        elif j['over']+1 == 7:
+                            team1worm[j['over']+1] = total_runs - 56
+                        elif j['over']+1 == 8:
+                            team1worm[j['over']+1] = total_runs - 61
+                        elif j['over']+1 == 9:
+                            team1worm[j['over']+1] = total_runs - 65
+                        elif j['over']+1 == 10:
+                            team1worm[j['over']+1] = total_runs - 80
+                        elif j['over']+1 == 11:
+                            team1worm[j['over']+1] = total_runs - 97
+                        elif j['over']+1 == 12:
+                            team1worm[j['over']+1] = total_runs - 104
+                        elif j['over']+1 == 13:
+                            team1worm[j['over']+1] = total_runs - 116
+                        elif j['over']+1 == 14:
+                            team1worm[j['over']+1] = total_runs - 125
+                        elif j['over']+1 == 15:
+                            team1worm[j['over']+1] = total_runs - 131
+                        elif j['over']+1 == 16:
+                            team1worm[j['over']+1] = total_runs - 139
+                        elif j['over']+1 == 17:
+                            team1worm[j['over']+1] = total_runs - 153
+                        elif j['over']+1 == 18:
+                            team1worm[j['over']+1] = total_runs - 172
+                        elif j['over']+1 == 19:
+                            team1worm[j['over']+1] = total_runs - 185
+                        elif j['over']+1 == 20:
+                            team1worm[j['over']+1] = total_runs - 192
+                    irst_total = total_runs
+                    total_runs = 0
+                    if len(data['innings']) > 1:
+                        for j in data['innings'][1]['overs']:
+                            for k in j['deliveries']:
+                                total_runs += k['runs']['total']
+                            if j['over']+1 == 1:
+                                team2worm[j['over']+1] = total_runs - 6
+                            elif j['over']+1 == 2:
+                                team2worm[j['over']+1] = total_runs - 9
+                            elif j['over']+1 == 3:
+                                team2worm[j['over']+1] = total_runs - 22
+                            elif j['over']+1 == 4:
+                                team2worm[j['over']+1] = total_runs - 34
+                            elif j['over']+1 == 5:
+                                team2worm[j['over']+1] = total_runs - 42
+                            elif j['over']+1 == 6:
+                                team2worm[j['over']+1] = total_runs - 50
+                            elif j['over']+1 == 7:
+                                team2worm[j['over']+1] = total_runs - 56
+                            elif j['over']+1 == 8:
+                                team2worm[j['over']+1] = total_runs - 61
+                            elif j['over']+1 == 9:
+                                team2worm[j['over']+1] = total_runs - 65
+                            elif j['over']+1 == 10:
+                                team2worm[j['over']+1] = total_runs - 80
+                            elif j['over']+1 == 11:
+                                team2worm[j['over']+1] = total_runs - 97
+                            elif j['over']+1 == 12:
+                                team2worm[j['over']+1] = total_runs - 104
+                            elif j['over']+1 == 13:
+                                team2worm[j['over']+1] = total_runs - 116
+                            elif j['over']+1 == 14:
+                                team2worm[j['over']+1] = total_runs - 125
+                            elif j['over']+1 == 15:
+                                team2worm[j['over']+1] = total_runs - 131
+                            elif j['over']+1 == 16:
+                                team2worm[j['over']+1] = total_runs - 139
+                            elif j['over']+1 == 17:
+                                team2worm[j['over']+1] = total_runs - 153
+                            elif j['over']+1 == 18:
+                                team2worm[j['over']+1] = total_runs - 172
+                            elif j['over']+1 == 19:
+                                team2worm[j['over']+1] = total_runs - 185
+                            elif j['over']+1 == 20:
+                                team2worm[j['over']+1] = total_runs - 192
+                        second_total = total_runs
+                        # team1worm_copy = team1worm.copy()
+                        # team2worm_copy = team2worm.copy()
+                        # for each key in team1worm, replace the attribute with the difference between the attribute and the corresponding attribute in final_2020_1
+                        if len(team1worm) == 20:
+                            # for key in Final_2020_1:
+                            #     team1worm[key] = team1worm_copy[key] - Final_2020_1[key]
+                                # if abs(team1worm[3]) <= 3 and abs(team1worm[7]) <= 3 and abs(team1worm[11]) <= 3 and abs(team1worm[15]) <= 3 and abs(team1worm[19]) <= 3:
+                                    innings[matchID + '_1'] = team1worm
+                        if len(team2worm) == 20:
+                            # for key in Final_2020_1:
+                            #     team2worm[key] = team2worm_copy[key] - Final_2020_1[key]
+                                # if abs(team2worm[3]) <= 3 and abs(team2worm[7]) <= 3 and abs(team2worm[11]) <= 3 and abs(team2worm[15]) <= 3 and abs(team2worm[19]) <= 3:
+                                    innings[matchID + '_2'] = team2worm
+
+    # sort the worms in the innings dictionary by the last attribute in ascending order. If the last attribute is the same, sort by the second to last attribute. And so on
+    sorted_innings = {}
+    for key in sorted(innings, key=lambda k: (abs(innings[k][19]), abs(innings[k][18]), abs(innings[k][17]), abs(innings[k][16]), abs(innings[k][15]), abs(innings[k][14]), abs(innings[k][13]), abs(innings[k][12]), abs(innings[k][11]), abs(innings[k][10]), abs(innings[k][9]), abs(innings[k][8]), abs(innings[k][7]), abs(innings[k][6]), abs(innings[k][5]), abs(innings[k][4]), abs(innings[k][3]), abs(innings[k][2]), abs(innings[k][1]))):
+        sorted_innings[key] = innings[key]
+    # for key in sorted(innings, key=lambda k: (innings[k][19], innings[k][18], innings[k][17], innings[k][16], innings[k][15], innings[k][14], innings[k][13], innings[k][12], innings[k][11], innings[k][10], innings[k][9], innings[k][8], innings[k][7], innings[k][6], innings[k][5], innings[k][4], innings[k][3], innings[k][2], innings[k][1])):
+    #     sorted_innings[key] = innings[key]
+
+    # save the innings dictionary to a json file
+    with open('inningsdiff.json', 'w') as f:
+        json.dump(sorted_innings, f, indent=4)
+
 def debugginglmao():
     for num, js in enumerate(json_files):
         with open(os.path.join(path_to_jsons, js)) as json_file:
@@ -444,4 +598,4 @@ def debugginglmao():
                     print(len(data['innings']))
 
 # whichever function you wanna use, substitute the name of the function here:
-worms_allyears()
+comparing_worm()
